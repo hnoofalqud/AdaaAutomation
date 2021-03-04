@@ -1,5 +1,5 @@
 import time
-
+import pyautogui
 from selenium.webdriver import ActionChains
 from POM.routes.routes import Routes
 
@@ -79,7 +79,7 @@ class Boards(Routes):
     _yesNoOptionDDL="//span[text()='{0}']"
     _deleteAttributeXpath="//mat-icon[contains(text(),'delete')]"
     # SAVE (SUBMIT) BUTTON
-    _saveBoardBtnXpath = "//button[@type='submit']"
+    _saveBoardBtnXpath ="//mat-select[@formcontrolname='value']"    #"//button[@type='submit']"
 
     # CLOSE (EXIT) BUTTON
     _closeBoardBtnXpath = "//span[contains(text(),'close')]"
@@ -185,6 +185,8 @@ class Boards(Routes):
     _clickganttab="//span[text()='Gant']"
     _expandgant="//div[2]//tr[1]/td[2]//span[1]"
 
+    _addfilexpath="//mat-icon[contains(text(),'cloud_upload')]"
+
     def __init__(self, driver):
         Routes.__init__(self, driver)
         self.htmlInfo += "<h3> BOARDS PAGE </h3>"
@@ -194,10 +196,13 @@ class Boards(Routes):
         return len(self.webDriver.find_elements_by_css_selector(self._allProjectsCssSelector))
 
     def click_project(self, projectName):
-       if self.validate.get_web_element(self._projectByNameXpath.format(projectName)).click():
-           self.htmlInfo += self.htmlP.format("true","open {0}".format(projectName))
+       element=self.validate.is_element_found_by_xpath(self._projectByNameXpath.format(projectName))
+       self.validate.get_web_element(self._projectByNameXpath.format(projectName)).click()
+
+       if element:
+           self.htmlInfo += self.htmlP.format("true","open {0} > PASS".format(projectName))
        else :
-           self.htmlInfo += self.htmlP.format("false", "open {0}".format(projectName))
+           self.htmlInfo += self.htmlP.format("false", "open {0} > PASS".format(projectName))
 
 
     def search_project(self, searchField):
@@ -209,52 +214,94 @@ class Boards(Routes):
 
     def get_new_board_btn(self, notes=""):
         self.htmlInfo += "<hr class='board validation'>"
-        self.htmlInfo += self.htmlP.format("", "NEW BOARD {0}".format(notes))
-        return self.validate.get_web_element(self._newBoardBtnXpath)
+        element2=self.validate.get_web_element(self._newBoardBtnXpath)
+        element2.click()
+        # print(element2.click())
+        if element2:
+            self.htmlInfo += self.htmlP.format("true", "NEW BOARD {0} > PASS".format(notes))
+        else:
+            self.htmlInfo += self.htmlP.format("false", "NEW BOARD {0} > FAIL".format(notes))
 
     def set_board_name(self, name):
-        if self.validate.get_web_element(self._boardNameXpath).send_keys(name):
-            self.htmlInfo += self.htmlP.format("true", "BOARD NAME: {0}".format(name))
+        element = self.validate.is_element_found_by_xpath(self._boardNameXpath)
+        self.validate.get_web_element(self._boardNameXpath).send_keys(name)
+        if element:
+            self.htmlInfo += self.htmlP.format("true", "BOARD NAME: {0} > PASS".format(name))
         else:
-            self.htmlInfo += self.htmlP.format("false", "BOARD NAME: {0}".format(name))
+            self.htmlInfo += self.htmlP.format("false", "BOARD NAME: {0} > FAIL".format(name))
 
 
     def set_board_code(self, code):
+        element = self.validate.is_element_found_by_xpath(self._boardCodeXpath)
         self.validate.get_web_element(self._boardCodeXpath).send_keys(code)
-        self.htmlInfo += self.htmlP.format("", "BOARD CODE: {0}".format(code))
+        if element:
+            self.htmlInfo += self.htmlP.format("true", "BOARD CODE: {0} > PASS".format(code))
+        else:
+            self.htmlInfo += self.htmlP.format("false", "BOARD CODE: {0} > FAIL".format(code))
+
+
 
     def set_board_department_drop_down(self, option):
         self.validate.get_web_element(self._boardDepartmentsDropDownXpath).click()
         webElement = self.validate.get_web_element(self._boardDepartmentsDropDownOptionByOrderXpath.format(option))
         webElement.click()
-        self.htmlInfo += self.htmlP.format("", "BOARD DEPARTMENT: OPTION#{0} - {1}".format(option, "{0}"))
+        if webElement:
+            self.htmlInfo += self.htmlP.format("true", "BOARD DEPARTMENT: OPTION#{0} - {1} > PASS".format(option, "{0}"))
+        else:
+            self.htmlInfo += self.htmlP.format("false","BOARD DEPARTMENT: OPTION#{0} - {1} > FAIL".format(option, "{0}"))
 
     def set_board_supervisor_drop_down(self, option):
         self.validate.get_web_element(self._boardSupervisorDropDownXpath).click()
         webElement = self.validate.get_web_element(self._boardSupervisorDropDownOptionByOrderXpath.format(option))
         webElement.click()
-        self.htmlInfo = self.htmlInfo.format("BOARD SUPERVISOR: OPTION#{0}".format(option))
+        if webElement:
+            self.htmlInfo = self.htmlInfo.format("true","BOARD SUPERVISOR: OPTION#{0} > PASS".format(option))
+        else:
+            self.htmlInfo = self.htmlInfo.format("false","BOARD SUPERVISOR: OPTION#{0} > FAIL".format(option))
+
 
     def set_Newboard_status(self, option):
         self.validate.get_web_element(self._boardStatusDropDownXpath).click()
-        self.validate.get_web_element(self._boardStatusDropDownOptionXpath.format(option)).click()
-        self.htmlInfo += self.htmlP.format("","set board status to {0}".format(option))
+        webElement=self.validate.get_web_element(self._boardStatusDropDownOptionXpath.format(option))
+        webElement.click()
+        if webElement:
+            self.htmlInfo += self.htmlP.format("true","SET BOARD STATUS TO {0} > PASS".format(option))
+        else:
+            self.htmlInfo += self.htmlP.format("false","SET BOARD STATUS TO {0} > FAIL".format(option))
+
     def set_board_color(self, option):
         self.validate.get_web_element(self._boardAppColorXpath).click()
-        self.validate.get_web_element(self._boardAppColorOptionXpath.format(option)).click()
-        self.htmlInfo += self.htmlP.format("","BOARD COLOR {0}".format(option))
+        webElement=self.validate.get_web_element(self._boardAppColorOptionXpath.format(option))
+        webElement.click()
+        if webElement:
+            self.htmlInfo += self.htmlP.format("true","BOARD COLOR {0} > PASS".format(option))
+        else:
+            self.htmlInfo += self.htmlP.format("false","BOARD COLOR {0} > FAIL".format(option))
+
+
     def set_board_departments_resource_pool(self, option):
         # [1,2,3]
         for optionItem in option:
             self.validate.get_web_element(self._boardDepartmentsResourcePoolDropDownXpath).click()
-            self.validate.get_web_element(self._boardDepartmentsResourcePoolDropDownOptionXpath.format(optionItem)).click()
-            self.htmlInfo += self.htmlP.format("", "BOARD DEPARTMENT RESOURCE POOL:{0}".format(optionItem))
+            webElement=self.validate.get_web_element(self._boardDepartmentsResourcePoolDropDownOptionXpath.format(optionItem))
+            webElement.click()
+            if webElement:
+                self.htmlInfo += self.htmlP.format("true ", "BOARD DEPARTMENT RESOURCE POOL:{0} > PASS".format(optionItem))
+            else:
+                self.htmlInfo += self.htmlP.format("false ", "BOARD DEPARTMENT RESOURCE POOL:{0} > FAIL".format(optionItem))
+
+
 
     def set_board_members_resource_pool(self, group, option):
         self.validate.get_web_element(self._membersResourcePoolDropDownXpath).click()
         for groupItem, optionItem in zip(group, option):
             currentOption = self.validate.get_web_element(self._membersResourcePoolDropDownOptionXpath.format(groupItem, optionItem))
             currentOption.click()
+            if currentOption:
+                self.htmlInfo += self.htmlP.format("true", "BOARD MEMBERS RESOURCE POOL:GROUP{0} OPTION {1} > PASS".format(groupItem,optionItem))
+            else:
+                self.htmlInfo += self.htmlP.format("false", "BOARD MEMBERS RESOURCE POOL:GROUP{0} OPTION {1} > FAIL".format(groupItem,optionItem))
+
 
         # TO CLICK OUTSIDE
         size = currentOption.size
@@ -264,108 +311,227 @@ class Boards(Routes):
         # self.validate.get_web_element("//body[1]/div[2]/div").click()  # CLOSE DIALOG
 
     def set_board_description(self, text):
-        self.validate.get_web_element(self._boardDescriptionXpath).send_keys(text)
-        self.htmlInfo += self.htmlP.format("","BOARD DESCRIPTION {0}".format(text))
+       webElement= self.validate.get_web_element(self._boardDescriptionXpath)
+       webElement.send_keys(text)
+       if webElement:
+           self.htmlInfo += self.htmlP.format("true","BOARD DESCRIPTION: {0}".format(text))
+       else:
+           self.htmlInfo += self.htmlP.format("false", "BOARD DESCRIPTION: {0}".format(text))
 
 
     def get_save_new_board_btn(self):
         imgHTML = self.validate.takeScreenshot(name="save_board")
         self.htmlInfo += imgHTML
+        webElement=self.validate.get_web_element(self._saveBoardBtnXpath)
+        try:
+            webElement.click()
+            self.htmlInfo += self.htmlP.format("true", "CLICK SAVE NEW BOARD")
 
-        return self.validate.get_web_element(self._saveBoardBtnXpath)
+        except Exception as e:
+            print(e)
+            self.htmlInfo += self.htmlP.format("false", "CLICK SAVE NEW BOARD")
+
+
+
 
     def get_close_new_board_btn(self):
-        self.htmlInfo += self.htmlP.format("", "CLOSE NEW BOARD")
-        return self.validate.get_web_element(self._closeBoardBtnXpath)
-
-
-
+        webElement= self.validate.get_web_element(self._closeBoardBtnXpath)
+        webElement.click()
+        if webElement:
+            self.htmlInfo += self.htmlP.format("true", "CLOSE NEW BOARD")
+        else:
+            self.htmlInfo += self.htmlP.format("false", "CLOSE NEW BOARD")
 
     def CopyfromBtn(self,option):
+        print("copppppyyyy")
         self.validate.get_web_element(self._copyfromBtnXpath).click()
-        self.validate.get_web_element(self._copyfromoptionxpath.format(option)).click()
+        webElement=self.validate.get_web_element(self._copyfromoptionxpath.format(option))
+        webElement.click()
+        if webElement:
+            self.htmlInfo += self.htmlP.format("true", "COPY FROM {0} > PASS".format(option))
+        else:
+            self.htmlInfo += self.htmlP.format("false","COPY FROM {0} > FAIL".format(option))
 
     def copyfromDDL(self,option,date):
         self.validate.get_web_element(self._firstDDLXpath).click()
-        self.validate.get_web_element(self._FirstDDLOptionXpath.format(option)).click()
+        webElement=self.validate.get_web_element(self._FirstDDLOptionXpath.format(option))
+        webElement.click()
         self.validate.get_web_element(self._copyTaskstartDate).send_keys(date)
+        if webElement:
+            self.htmlInfo += self.htmlP.format("true", "COPY FROM {0} PROJECT> PASS".format(option))
+        else:
+            self.htmlInfo += self.htmlP.format("false","COPY FROM {0} PROJECT> FAIL".format(option))
+
+
     # --------------------------------
 
     def get_new_task_btn(self):
         self.htmlInfo += "<hr class='board validation'>"
-        time.sleep(2)
-        return self.validate.get_web_element(self._newTaskBtnXpath)
+        webElement=self.validate.get_web_element(self._newTaskBtnXpath)
+        webElement.click()
+        if webElement:
+            self.htmlInfo += self.htmlP.format("true", "CLICK NEW TASK > PASS")
+        else:
+            self.htmlInfo += self.htmlP.format("false","CLICK NEW TASK > FAIL")
+
+
+
+
 
     def new_childTask_btn(self,order):
-        self.validate.get_web_element(self._newchildtaskBtnXpath.format(order)).click()
+        webElement=self.validate.get_web_element(self._newchildtaskBtnXpath.format(order))
+        webElement.click()
+        if webElement:
+            self.htmlInfo += self.htmlP.format("true", "CLICK NEW CHILD TASK > PASS")
+        else:
+            self.htmlInfo += self.htmlP.format("false", "CLICK NEW CHILD TASK > FAIL")
 
 
     def set_task_name(self, name):
-        self.validate.get_web_element(self._taskNameXpath).send_keys(name)
-        self.htmlInfo += self.htmlP.format("", "NEW TASK -> TASK NAME: {0} ".format(name))
+       webElement=self.validate.get_web_element(self._taskNameXpath)
+       webElement.send_keys(name)
+       if webElement:
+           self.htmlInfo += self.htmlP.format("true", "NEW TASK -> TASK NAME: {0} > PASS".format(name))
+       else:
+           self.htmlInfo += self.htmlP.format("false", "NEW TASK -> TASK NAME: {0} > PASS ".format(name))
+
 
     def set_task_description(self, description):
-        self.validate.get_web_element(self._taskDescriptionXpath).send_keys(description)
-        self.htmlInfo += self.htmlP.format("", "TASK DESCRIPTION: {0} ".format(description))
+        webElement=self.validate.get_web_element(self._taskDescriptionXpath)
+        webElement.send_keys(description)
+        if webElement:
+            self.htmlInfo += self.htmlP.format("true", "TASK DESCRIPTION: {0} > PASS ".format(description))
+        else:
+            self.htmlInfo += self.htmlP.format("false", "TASK DESCRIPTION: {0} > PASS".format(description))
 
     def set_task_start_end_date(self, startDate, endDate):
-        self.validate.get_web_element(self._taskEndDateXpath).send_keys(endDate)
-        self.validate.get_web_element(self._taskStartDateXpath).send_keys(startDate)
-        self.htmlInfo += self.htmlP.format("","START DATE: {0} - END DATE: {1} ".format(startDate, endDate, ))
+        webElement1=self.validate.get_web_element(self._taskEndDateXpath)
+        webElement1.send_keys(endDate)
+        if webElement1:
+            self.htmlInfo += self.htmlP.format("true", "END DATE: {0} > PASS".format(endDate))
+        else:
+            self.htmlInfo += self.htmlP.format("false", "END DATE: {0}  > FAIL".format(endDate))
+
+        webElement2=self.validate.get_web_element(self._taskStartDateXpath)
+        webElement2.send_keys(startDate)
+
+        if webElement2:
+            self.htmlInfo += self.htmlP.format("true", "START DATE: {0} > PASS".format(startDate))
+        else:
+            self.htmlInfo += self.htmlP.format("false", "START DATE: {0}  > FAIL".format(startDate))
 
     def set_task_duration(self, duration):
-        self.validate.get_web_element(self._taskDurationXpath).send_keys(duration)
-        self.htmlInfo = self.htmlInfo.format("DURATION: {0}".format(duration))
+        webElement=self.validate.get_web_element(self._taskDurationXpath)
+        webElement.send_keys(duration)
+        if webElement:
+            self.htmlInfo += self.htmlP.format("true","DURATION: {0} > PASS".format(duration))
+        else:
+            self.htmlInfo +=self.htmlP.format("false", "DURATION: {0} > FAIL" .format(duration))
 
     def set_task_departments(self, options):
         for optionItem in options:
             self.validate.get_web_element(self._taskDepartmentsDropDownXpath).click()
-            self.validate.get_web_element(self._taskDepartmentsDropDownOptionXpath.format(optionItem)).click()
-        self.htmlInfo = self.htmlP.format("", "TASK DEPARTMENTS: {0}".format(str(options)))
+            webElement=self.validate.get_web_element(self._taskDepartmentsDropDownOptionXpath.format(optionItem))
+            webElement.click()
+            if webElement:
+                self.htmlInfo += self.htmlP.format("true", "TASK DEPARTMENTS: {0} > PASS".format(str(options)))
+            else:
+                self.htmlInfo += self.htmlP.format("false", "TASK DEPARTMENT: {0} > FAIL".format(str(optionItem)))
+
 
     def set_task_members(self, options):
         for optionItem in options:
             self.validate.get_web_element(self._taskMembersDropDownXpath).click()
-            self.validate.get_web_element(self._taskMembersDropDownOptionXpath.format(optionItem)).click()
-        self.htmlInfo = self.htmlInfo.format("TASK MEMBERS: {0}".format(options))
+            webElement=self.validate.get_web_element(self._taskMembersDropDownOptionXpath.format(optionItem))
+            webElement.click()
+            if webElement:
+                self.htmlInfo += self.htmlP.format("true","TASK MEMBERS: {0} > PASS".format(optionItem))
+            else:
+                self.htmlInfo += self.htmlP.format("false","TASK MEMBERS: {0} > FAIL".format(optionItem))
+
 
     def set_task_progress(self,Option):
         self.validate.get_web_element(self._taskProgressType).click()
-        self.validate.get_web_element(self. _taskProgressTypeOptionByOrder.format(Option)).click()
+        webElement=self.validate.get_web_element(self. _taskProgressTypeOptionByOrder.format(Option))
+        webElement.click()
+        if webElement:
+            self.htmlInfo += self.htmlP.format("true", "TASK PROGRESS TYPE: {0} > PASS".format(Option))
+        else:
+            self.htmlInfo += self.htmlP.format("false", "TASK PROGRESS TYPE: {0} > FAIL".format(Option))
+
 
     def set_task_progress_ratio(self,ratio):
-        self.validate.get_web_element(self._taskProgressRatio).send_keys(ratio)
-        self.htmlInfo += self.htmlP.format("","TASK PROGRESS RATIO {0}".format(ratio))
+        webElement=self.validate.get_web_element(self._taskProgressRatio)
+        webElement.send_keys(ratio)
+        if webElement:
+            self.htmlInfo += self.htmlP.format("true", "TASK PROGRESS RATIO: {0} > PASS".format(ratio))
+        else:
+            self.htmlInfo += self.htmlP.format("false", "TASK PROGRESS RATIO: {0} > FAIL".format(ratio))
+
+
     def set_task_priority(self,priority):
         self.validate.get_web_element(self._taskPriorityDDLXpath).click()
-        self.validate.get_web_element(self._taskPriorityOptionXpath.format(priority)).click()
-        self.htmlInfo += self.htmlP.format("","TASK PRIORITY {0}".format(priority))
+        webElement=self.validate.get_web_element(self._taskPriorityOptionXpath.format(priority))
+        webElement.click()
+        if webElement:
+            self.htmlInfo += self.htmlP.format("true","TASK PRIORITY {0} > PASS".format(priority))
+        else:
+            self.htmlInfo += self.htmlP.format("false","TASK PRIORITY {0} > FAIL".format(priority))
+
+
 
     def set_task_priority_details(self,option):
         self.validate.get_web_element(self._taskPriorittyDetailsDDLXpath).click()
-        self.validate.get_web_element(self._taskPriorityDetailsOptionXpath.format(option)).click()
-        self.htmlInfo += self.htmlP.format("","PRIORITY DETAILS {0}".format(option))
+        webElement=self.validate.get_web_element(self._taskPriorityDetailsOptionXpath.format(option))
+        webElement.click()
+        if webElement:
+            self.htmlInfo += self.htmlP.format("true","PRIORITY DETAILS {0} > PASS".format(option))
+        else:
+            self.htmlInfo += self.htmlP.format("false","PRIORITY DETAILS {0} > FAIL".format(option))
+
 
     def set_depndancy(self,option):
         self.validate.get_web_element(self._DependancyDDLXpath).click()
-        self.validate.get_web_element(self._DependancyOptionXpath.format(option)).click()
-        self.htmlInfo += self.htmlP.format("", "TASK DEPNDANCY {0}".format(option))
+        webElement=self.validate.get_web_element(self._DependancyOptionXpath.format(option))
+        webElement.click()
+        if webElement:
+            self.htmlInfo += self.htmlP.format("true", "TASK DEPNDANCY {0} > PASS".format(option))
+        else:
+            self.htmlInfo += self.htmlP.format("false", "TASK DEPNDANCY {0} > FAIL".format(option))
+
 
     def save_new_task(self):
-        self.validate.get_web_element(self._saveTaskBtnXpath).click()
-        self.htmlInfo += self.htmlP.format("", "SAVE TASK")
+        webElement=self.validate.get_web_element(self._saveTaskBtnXpath)
+        webElement.click()
+        if webElement:
+            self.htmlInfo += self.htmlP.format("true", "SAVE TASK > PASS")
+        else:
+            self.htmlInfo += self.htmlP.format("false", "SAVE TASK > FAIL")
+
+
     def cancel_task(self):
-        self.validate.get_web_element(self._cancelTaskBtnXpath).click()
-        self.htmlInfo += self.htmlP.format("","CANCEL TASK")
+        webElement=self.validate.get_web_element(self._cancelTaskBtnXpath)
+        webElement.click()
+        if webElement:
+            self.htmlInfo += self.htmlP.format("true","CANCEL TASK > PASS")
+        else:
+            self.htmlInfo += self.htmlP.format("false", "CANCEL TASK > FAIL")
+
+
     def Board_DDL(self,option):
         self.validate.get_web_element(self._BoardDDLBtnXpath).click()
-        self.validate.get_web_element(self._BoardDDLOptionXpath.format(option)).click()
-        self.htmlInfo += self.htmlP.format("", "BOARD {0}".format(option))
-
+        webElement=self.validate.get_web_element(self._BoardDDLOptionXpath.format(option))
+        webElement.click()
+        if webElement:
+            self.htmlInfo += self.htmlP.format("true", "BOARD {0} > PASS".format(option))
+        else:
+            self.htmlInfo += self.htmlP.format("false", "BOARD {0} > FAIL".format(option))
 
 
     def set_Convert_To_name(self, text):
-        self.validate.get_web_element(self._ConvertToNameXpath).send_keys(text)
+        webElement=self.validate.get_web_element(self._ConvertToNameXpath)
+        webElement.send_keys(text)
+        # if webElement()
         self.htmlInfo += self.htmlP.format("","CONVERT TO TEMPLATE {0}".format(text))
 
     def validate_Tasks_number (self):
@@ -523,6 +689,13 @@ class Boards(Routes):
         self.validate.is_element_found_by_xpath(self._activitylogrows)
 
 
+
+    def copycsv(self):
+        self.validate.get_web_element(self._addfilexpath).click()
+        x, y = pyautogui.locateCenterOnScreen('1.png', confidence=0.9)
+
+        pyautogui.doubleClick(x, y)
+       #self.webDriver.find_elements_by_css_selector("input[type='files']").SendKeys(r"C:\Users\Hanoof.Alqadeh\Desktop\AdaaAutomation")
 
 
 

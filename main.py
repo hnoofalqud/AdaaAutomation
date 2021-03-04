@@ -11,9 +11,11 @@ from POM.routes.escalation_page.escalation import Escalation
 from POM.routes.inbox_page.inbox import Inbox
 from POM.routes.navigation import Navigation
 from POM.routes.reports_page.reports import Reports
+from POM.routes.myprofile.myprofile import myprofile
 from browser.browser import Browser
 from POM.routes.approvals_page.Approvals import approvals
 from input_output.Excel import ReadExcel
+from POM.routes.mytasks_page.mytasks import Mytasks
 from validate.toastMsg import ToastMsg
 from validate.validateElement import ValidateElement
 from Files.utilities import Utilities
@@ -58,13 +60,15 @@ if login:
     contactsPage = Contacts(driver=browserObj.driver)
     calendarPage=Calendar(driver=browserObj.driver)
     adminPage = admin(driver=browserObj.driver)
+    mytasks= Mytasks(driver=browserObj.driver)
+    myprofile=myprofile(driver=browserObj.driver)
 
 
 
 
     for singleTestCase in testCaseList:
         print(singleTestCase)
-        excelToCode = ExcelToCode(browserObj, readExcel, str(singleTestCase), navigationControls, boardsPage, inboxPage , toastMsg , reports,calendarPage, escalation ,approvalsPage,activitylogPage,contactsPage,adminPage,validate)
+        excelToCode = ExcelToCode(browserObj, readExcel, str(singleTestCase), navigationControls, boardsPage, inboxPage , toastMsg , reports,calendarPage, escalation ,approvalsPage,activitylogPage,contactsPage,adminPage,mytasks,myprofile,validate)
         result = excelToCode.read_rows()
 
         if result == False:
@@ -80,6 +84,7 @@ else:
     print("LOGIN FAILED------")
 
 counterTrue = str(htmlInfo).lower().count("true")
+counterTrue2 = str(htmlInfo).lower().count("truefinalstep")
 counterFalse = str(htmlInfo).lower().count("false")
 
 if counterTrue + counterFalse > 0:

@@ -28,8 +28,8 @@ class Navigation(Routes):
     _escalationXpath = _navigationByOrderXpath.format(9)
     _reportsXpath = _navigationByOrderXpath.format(10)
     _contactsXpath = _navigationByOrderXpath.format(11)
+    _mytasksXpath=_navigationByOrderXpath.format(8)
     _adminxpath=_navigationByOrderXpath.format(14)
-
     # NOTIFICATIONS
     _notificationsIconXpath = "//span[@class='material-icons notif mat-menu-trigger']"
     _notificationsListXpath = "//div[@class='mat-menu-content']/div"
@@ -65,6 +65,9 @@ class Navigation(Routes):
     def get_approval_btn(self):
         return self.validate.get_web_element(xpath=self._approvalXpath)  # RETURNS A WEB ELEMENT IF FOUND
 
+    def get_mytasks_btn(self):
+        return self.validate.get_web_element(xpath=self._mytasksXpath)  # RETURNS A WEB ELEMENT IF FOUND
+
     def get_escalation_btn(self):
         return self.validate.get_web_element(xpath=self._escalationXpath)  # RETURNS A WEB ELEMENT IF FOUND
 
@@ -79,7 +82,8 @@ class Navigation(Routes):
 
     def get_notifications_btn(self):
         return self.validate.get_web_element(xpath=self._notificationsIconXpath)  # RETURNS A WEB ELEMENT IF FOUND
-
+    def get_myprofileBtn(self):
+        return self.validate.get_web_element(self._avatarIconXpath)
     def navigate_to_page(self, page=""):
         navigateTo = None
 
@@ -105,4 +109,8 @@ class Navigation(Routes):
             navigateTo=self.get_contacts_btn()
         if str(page).lower().__contains__("admin"):
             navigateTo=self.get_admin_btn()
+        if str(page).lower().__contains__("my tasks"):
+            navigateTo=self.get_mytasks_btn()
+        if str(page).lower().__contains__("my profile"):
+            navigateTo=self.get_myprofileBtn()
         navigateTo.click()

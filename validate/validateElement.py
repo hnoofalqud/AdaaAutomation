@@ -4,7 +4,6 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-
 class ValidateElement:
 
     def __init__(self, driver):
@@ -21,7 +20,8 @@ class ValidateElement:
         self.driver.save_screenshot(path)
         print("SCREENSHOT SAVED [{0}]".format(path))
         #
-        imgHTML = "<img class='validation screenshot' src = './Files/Log/{0}' width = '100px' style = 'margin: auto 25 %;'> ".format(name)
+        imgHTML = "<img class='validation screenshot' src = './Files/Log/{0}' width = '100px' style = 'margin: auto 25 %;'> ".format(
+            name)
         return imgHTML
 
     def is_element_found_by_xpath(self, xpath):
@@ -42,13 +42,13 @@ class ValidateElement:
             EC.invisibility_of_element_located((By.XPATH, _loaderXpath)))
 
     def wait_for_element(self, xpath, waitTime=10):
-        # Wait for the loader to disappear
         try:
             WebDriverWait(self.driver, waitTime).until(
                 EC.element_to_be_clickable((By.XPATH, xpath)))
+
             return True
-        except:
-            print("WAITED TO LONG TO LOAD")
+        except Exception as e:
+            print("WAITED TO LONG TO LOAD", str(e))
             return False
 
     def get_system_massage(self, xpath):
@@ -70,3 +70,10 @@ class ValidateElement:
             print("ELEMENT NOT FOUND")
             return None
 
+    def get_web_elements(self, xpath):
+        self.wait_for_loader()
+        if self.wait_for_element(xpath=xpath):
+            return self.driver.find_elements_by_xpath(xpath)
+        else:
+            print("ELEMENT NOT FOUND")
+            return None
