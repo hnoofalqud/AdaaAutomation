@@ -1,9 +1,7 @@
 from selenium.webdriver.common.by import By
-
-from validate.validateElement import ValidateElement
-
-from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
+from validate.validateElement import ValidateElement
 
 
 class Login:

@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['Main.py'],
-             pathex=['C:\\Users\\Hanoof.Alqadeh\\Desktop\\Adaa-master'],
+             pathex=['C:\\Users\\Hanoof.Alqadeh\\Desktop\\AutomationAdaa2\\AdaaAutomation2'],
              binaries=[],
              datas=[],
              hiddenimports=[],

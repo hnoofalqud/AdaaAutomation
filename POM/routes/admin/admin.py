@@ -1,7 +1,5 @@
 
-
 from POM.routes.routes import Routes
-
 
 class admin(Routes):
 
@@ -62,6 +60,7 @@ class admin(Routes):
     _SaveNewHolidayBtnXpath="//span[text()='Save ']"
     _EditHolidayXpath = "//td[contains(text(),'{0}')]//..//td[3]/mat-icon"  # BY LABEL
     _deleteHolidayeXpath = "//td[contains(text(),'{0}')]//..//td[4]/mat-icon"  # BY LABEL
+    _confirmdeletexpath="//p[contains(text(),'Delete')]"
     _Applyonholiday="//td[contains(text(),'{0}')]//..//div[@class='mat-select-value']" #BY LABEL
     _ApplyonholidayOption="//div[3]/div[2]//mat-option[{0}]/span[1]" #BY ORDER
 
@@ -89,12 +88,19 @@ class admin(Routes):
 
     _SourceTitleDDLXpath="//mat-select[@formcontrolname='srcTitle']"
     _DestDepDDLXpath="//ng-select[@formcontrolname='destDirectorate']"
+    _DestDepDDLoptionXpath="//span[contains(text(),'{0}')]"  #By label
     _DestTitleDDLXpath="//mat-select[@formcontrolname='destTitle']"
+    _DestTitleOption="//span[contains(text(),'{0}')]"  #BY LABLE
     _UsersDDLXpath="//ng-select[@formcontrolname='employees']"
     _ReportsApplyOnDDLXpath="//ng-select[@formcontrolname='applyOn']"
+    _EditReportsApplyOnDDLXpath="//tr[4]/td[2]/div[1]//div[3]/mat-select[1]"
     _SaveReportsBtnXpath="//span[text()='Save ']"
-    _DeleteReportBtnXpath=""
-
+    _DeleteReportBtnXpath="//tr[{0}]/td[5]/mat-icon[1]"
+    _ConfirmDeletereporttemp= "//p[contains(text(),'Delete')]"
+    _CancelDeletereporttemp="//p[contains(text(),'Cancel')]"
+    _EditreportTemplate="//tr[{0}]/td[4]/mat-icon[1]"    #by order
+    _setreporttempasdefault="//tr[{0}]/td[3]/mat-slide-toggle[1]"
+    _setreporttempnwdefault="//div[3]/mat-slide-toggle[1]"
 
 
 
@@ -269,6 +275,8 @@ class admin(Routes):
     def deleteHoliday(self,HolidayName):
         self.htmlInfo += self.htmlP.format("", " :{0}".format("DELETE HOLIDAY"))
         self.validate.get_web_element(self._deleteHolidayeXpath.format(HolidayName)).click()
+    def confirm_delete(self):
+        self.validate.get_web_element(self._confirmdeletexpath).click()
 
     def edit_Holiday(self, name):
         self.htmlInfo += self.htmlP.format("", " :{0}".format("EDIT HOLIDAY"))
@@ -291,7 +299,6 @@ class admin(Routes):
     _SourceTitleDDLXpath = "//mat-select[@formcontrolname='srcTitle']"
     _SourceTitleOptionXpath="//span[contains(text(),'{0}')]"  #BY LABEL
     _DestDepDDLXpath = "//ng-select[@formcontrolname='destDirectorate']"  #//app-reports-management/form/div[2]/div[3]/div/div[3]/ng-select
-    _DestTitleDDLXpath = "//mat-select[@formcontrolname='destTitle']"     #//app-reports-management/form/div[2]/div[4]/div/div[3]/ng-select
     _UsersDDLXpath = "//ng-select[@formcontrolname='employees']"
     _ReportsApplyOnDDLXpath = "//ng-select[@formcontrolname='applyOn']"
     _SaveReportsBtnXpath = "//span[text()='Save ']"
@@ -313,5 +320,43 @@ class admin(Routes):
     def set_sourceTitle(self,title):
         self.validate.get_web_element(self._SourceTitleDDLXpath).click()
         self.validate.get_web_element(self._SourceTitleOptionXpath.format(title)).click()
+
+    def set_DestDep(self,name):
+        self.validate.get_web_element(self._DestDepDDLXpath).click()
+        self.validate.get_web_element(self._DestDepDDLoptionXpath.format(name)).click()
+
+    def set_DestTitle(self,name):
+        self.validate.get_web_element(self._DestTitleDDLXpath).click()
+        self.validate.get_web_element(self._DestTitleOption.format(name)).click()
+
+
+    def Edit_reportTemp(self,order):
+        self.validate.get_web_element(self._EditreportTemplate.format(order)).click()
+
+
+    def DeleteRepportTemolate(self,order):
+        self.validate.get_web_element(self._DeleteReportBtnXpath.format(order)).click()
+
+    def confirmDelete(self):
+        self.validate.get_web_element(self._ConfirmDeletereporttemp).click()
+    def canceldeletereport(self):
+        self.validate.get_web_element(self._CancelDeletereporttemp).click()
+
+    def set_report_temp_defualt(self,type,order):
+        if str(type).lower()== "new":
+            self.validate.get_web_element(self._setreporttempnwdefault).click()
+        elif str(type).lower()=="edit":
+            self.validate.get_web_element(self._setreporttempasdefault.format(order)).click()
+        else:
+            print("please enter the type")
+
+
+    def Applyon(self,type,order):
+        if str(type).lower()=="new" :
+            self.validate.get_web_element(self._ReportsApplyOnDDLXpath).click()
+        elif str(type).lower()== "edit" :
+            self.validate.get_web_element(self._EditReportsApplyOnDDLXpath.format(order)).click()
+        else:
+            print("please enter the type")
 
 

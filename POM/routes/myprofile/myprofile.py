@@ -19,6 +19,9 @@ class myprofile(Routes):
     _TasksNotificationBtnXpath="//mat-tab-body/div/div/div[2]/div/mat-slide-toggle[{0}]"  #BY ORDER
     _GeneralNotificationBtnXpath="//mat-tab-body/div/div/div[3]/div/mat-slide-toggle[1]"
     _EmailNotificationBtnXpath="//mat-tab-body/div/div/div[4]/div/mat-slide-toggle[1]"
+    _SaveBtnXpath="//span[text()='Save ']"
+    _ConfirmBtnXpath="//mat-icon[contains(text(),'save')]"
+    _CancelBtnXpath="//p[contains(text(),'Cancel')]"
 
 
     def permession_tab(self):
@@ -41,10 +44,15 @@ class myprofile(Routes):
 
 
     def delete_image(self):
+        self.validate.get_web_element(self._editBtnXpath).click()
+
         self.validate.get_web_element(self._deleteimgXpath)
 
-    def change_image(self,dir, name):
+
+    def openmyprofile(self):
         self.validate.get_web_element(self._myprofileXpath).click()
+
+    def change_image(self,dir, name):
         self.validate.get_web_element(self._editBtnXpath).click()
         self.validate.get_web_element(self._changephoto).click()
         x, y = pyautogui.locateCenterOnScreen('file_path.png', confidence=0.5)

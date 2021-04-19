@@ -1,6 +1,3 @@
-from selenium.webdriver import ActionChains
-from selenium.webdriver.common.keys import Keys
-
 from POM.routes.routes import Routes
 
 

@@ -11,7 +11,7 @@ class ExcelToCode(Utilities):
     readExcel = None  # THE EXCEL FILE OBJECT
     sheet = None  # THE CURRENT EXCEL FILE SHEET NAME
 
-    def __init__(self, browserObject, readExcel, sheet, navigationControls, boardsPage, inboxPage, toastMsg , reportsPage, calendarPage, escalationPage, approvalsPage, activitylogPage, contactsPage, adminPage, mytasksPage, myprofile,validate):
+    def __init__(self, browserObject, readExcel, sheet, navigationControls, boardsPage, inboxPage, toastMsg , reportsPage, calendarPage, escalationPage, approvalsPage, activitylogPage, contactsPage, adminPage, mytasksPage, myprofile, homepage,validate):
         self.browserObject = browserObject
         self.webDriver = browserObject.driver  # OBJECT THAT HOLDS THE DESIRED BROWSER
         self.readExcel = readExcel  # OBJECT THAT HOLDS THE EXCEL FILE
@@ -40,6 +40,7 @@ class ExcelToCode(Utilities):
         self.admin=adminPage
         self.mytasks= mytasksPage
         self.myprofile= myprofile
+        self.homepage=homepage
 
 
 
@@ -128,9 +129,12 @@ class ExcelToCode(Utilities):
         elif str(self.currentPage).lower().__contains__("admin"):
             self.admin_buttons(rowNumber,getParameter)
         elif str(self.currentPage).lower().__contains__("my tasks"):
-            self.mytasks(rowNumber,getParameter)
+            self.mytasks_buttons(rowNumber,getParameter)
         elif str(self.currentPage).lower().__contains__("my profile"):
             self.myprofile_buttons(rowNumber,getParameter)
+        elif str(self.currentPage).lower().__contains__("home"):
+            self.homepage_buttons(rowNumber,getParameter)
+
 
 
 
@@ -159,6 +163,11 @@ class ExcelToCode(Utilities):
             self.set_activiyLogs(getParameter, getInputData, getExtraData)
         elif str(self.currentPage).lower().__contains__("admin"):
             self.set_admin(getParameter, getInputData, getExtraData)
+        elif str(self.currentPage).lower().__contains__("my profile"):
+            self.set_myprofile(getParameter, getInputData, getExtraData)
+        elif str(self.currentPage).lower().__contains__("home"):
+            self.set_homepage(getParameter,getInputData,getExtraData)
+
 
 
 
@@ -166,6 +175,8 @@ class ExcelToCode(Utilities):
     def board_buttons(self, rowNumber, getParameter):
         if str(getParameter).lower().__contains__('new board'):
             self.boardsPage.get_new_board_btn()
+        elif str(getParameter).lower().__contains__('calendar view'):
+            self.boardsPage.CalendarView(self.get_input_data_from_row(rowNumber))
         elif str(getParameter).lower().__contains__('add attributes'):
             self.boardsPage.click_addAttributes()
         elif str(getParameter).lower().__contains__('delete attribute'):
@@ -188,6 +199,8 @@ class ExcelToCode(Utilities):
             self.boardsPage.Confirm_Delete()
         elif str(getParameter).lower().__contains__('search project'):
             self.boardsPage.search_project(self.get_input_data_from_row(rowNumber))
+        elif str(getParameter).lower().__contains__('day'):
+            self.boardsPage.opentasklist_DayinCalendar(self.get_input_data_from_row(rowNumber))
         elif str(getParameter).lower().__contains__("task details"):
             self.boardsPage.click_Task_Details(self.get_input_data_from_row(rowNumber))
         elif str(getParameter).lower().__contains__("comment"):
@@ -202,8 +215,11 @@ class ExcelToCode(Utilities):
             self.boardsPage.click_progress_ratio(self.get_input_data_from_row(rowNumber))
         elif str(getParameter).lower().__contains__('gant'):
             self.boardsPage.click_gantview()
+        elif str(getParameter).lower().__contains__('calendar'):
+            self.boardsPage.click_Calendar_view()
+        elif str(getParameter).lower().__contains__('open task'):
+            self.boardsPage.open_Taskincalendar(self.get_input_data_from_row(rowNumber))
         elif str(getParameter).lower().__contains__("copy from"):
-            print("copy1")
             self.boardsPage.CopyfromBtn(self.get_input_data_from_row(rowNumber))
         elif str(getParameter).lower().__contains__('filter'):
             self.boardsPage.click_filter()
@@ -219,7 +235,47 @@ class ExcelToCode(Utilities):
         if str(getParameter).lower().__contains__('members'):
             self.mytasks.loop_over_members(self.get_input_data_from_row(rowNumber))
 
+    def mytasks_buttons(self, rowNumber, getParameter):
+        if str(getParameter).lower().__contains__("task details"):
+            self.mytasks.open_task_details(self.get_input_data_from_row(rowNumber),self.get_extra_data_from_row(rowNumber))
+        # elif str(getParameter).lower().__contains__("")
 
+
+    def set_mytasks(self, getParameter, getInputData, getExtraData):
+        if str(getParameter).lower().__contains__("task name"):
+            self.mytasks.editname(getInputData)
+        elif str(getParameter).lower().__contains__("description"):
+            self.mytasks.editDescription(getInputData)
+        elif str(getParameter).lower().__contains__("start date"):
+            self.mytasks.edit_startdate(getInputData)
+        elif str(getParameter).lower().__contains__("end date"):
+            self.mytasks.edit_enddate(getInputData)
+        elif str(getParameter).lower().__contains__("recurring"):
+            self.mytasks.select_Recurring(getInputData)
+        elif str(getParameter).lower().__contains__("duration"):
+            self.mytasks.edit_duration(getInputData)
+        elif str(getParameter).lower().__contains__("weekly every"):
+            self.mytasks.weekly_everyrecurring(getInputData)
+        elif str(getParameter).lower().__contains__("weekly day"):
+            self.mytasks.set_weeklyDay(getExtraData)
+        elif str(getParameter).lower().__contains__("weekly occerunce"):
+            self.mytasks.set_weklyoccurrenc(getInputData)
+        elif str(getParameter).lower().__contains__("monthly every"):
+            self.mytasks.monthly_recurring(getInputData,getExtraData)
+        # if str(getParameter).lower().__contains__("")
+
+
+    def homepage_buttons(self,rowNumber,getParmeter):
+        if str(getParmeter).lower().__contains__("expand"):
+            self.homepage.expand_tabs(self.get_input_data_from_row(rowNumber))
+        elif str(getParmeter).lower().__contains__("open task"):
+            self.homepage.open_Task(self.get_input_data_from_row(rowNumber))
+        elif str(getParmeter).lower().__contains__("open members"):
+            self.homepage.open_Members(self.get_input_data_from_row(rowNumber))
+        elif str(getParmeter).lower().__contains__("open board"):
+            self.homepage.openBoards(self.get_input_data_from_row(rowNumber))
+        elif str(getParmeter).lower().__contains__("tasks"):
+            self.homepage.tasks(self.get_input_data_from_row(rowNumber),self.get_extra_data_from_row(rowNumber))
     def inbox_buttons(self, rowNumber, getParameter):
         if str(getParameter).lower().__contains__('new'):
             self.inboxPage.get_new_inbox_msg_btn().click()
@@ -266,6 +322,8 @@ class ExcelToCode(Utilities):
             self.boardsPage.select_attribures(getInputData,getExtraData)
         elif str(getParameter).lower().__contains__('new board color'):
             self.boardsPage.set_board_color(getInputData)
+        elif str(getParameter).lower().__contains__('edit color'):
+            self.boardsPage.edit_color(getInputData)
         elif str(getParameter).lower().__contains__("copy from details"):
             self.boardsPage.copyfromDDL(getInputData,getExtraData)
         elif str(getParameter).lower().__contains__('board ddl'):
@@ -311,7 +369,10 @@ class ExcelToCode(Utilities):
     def validate_Boards(self,rowNumber,getParameter):
         if str(getParameter).lower().__contains__("approve status"):
             self.boardsPage.Validate_Approved_status(self.get_input_data_from_row(rowNumber) ,self.get_extra_data_from_row(rowNumber))
-
+        elif str(getParameter).lower().__contains__("board name"):
+            self.boardsPage.validate_boardName_Edit(self.get_input_data_from_row(rowNumber))
+        elif str(getParameter).lower().__contains__("tasks list"):
+            self.boardsPage.validate_tasksListInCalendar()
     def set_inbox(self, getParameter, getInputData, getExtraData):
         if str(getParameter).lower().__contains__("board"):
             self.inboxPage.set_inbox_board_name_drop_down(getInputData)
@@ -325,6 +386,8 @@ class ExcelToCode(Utilities):
     def myprofile_buttons(self,rowNumber,getParameter):
         if str(getParameter).lower().__contains__("permission"):
             self.myprofile.permession_tab()
+        if str(getParameter).lower().__contains__("my profile"):
+            self.myprofile.openmyprofile()
         elif str(getParameter).lower().__contains__("notifications"):
             self.myprofile.notification_tab()
         elif str(getParameter).lower().__contains__("delete img"):
@@ -332,11 +395,11 @@ class ExcelToCode(Utilities):
         elif str(getParameter).lower().__contains__("change img"):
             self.myprofile.change_image(self.get_input_data_from_row(rowNumber),self.get_extra_data_from_row(rowNumber))
         # elif str(getParameter).lower().__contains__("")
-
-
-   # def set_myprofile(self,getParameter, getInputData, getExtraData):
-   #     if str(getParameter).lower().__contains__("mobile"):
-   #         self.myprofile.
+    def set_myprofile(self,getParameter, getInputData, getExtraData):
+        if str(getParameter).lower().__contains__("mobile"):
+            self.myprofile.set_mobileNum(getInputData)
+        if str(getParameter).lower().__contains__("notificattion"):
+            self.myprofile.checknotification(getInputData, str(getExtraData).split(","))
 
     def reports_buttons(self, rowNumber, getParameter):
        if str(getParameter).lower().__contains__("new report"):
@@ -567,14 +630,14 @@ class ExcelToCode(Utilities):
     def admin_buttons(self, rowNumber, getParameter):
         if str(getParameter).lower().__contains__("page"):
             self.admin.click_Page(self.get_input_data_from_row(rowNumber))
-        elif str(getParameter).lower().__contains__("new category"): #set admin
-                self.admin.add_category()
+        elif str(getParameter).lower().__contains__("confirm delete"):
+            self.admin.confirm_delete()
         elif str(getParameter).lower().__contains__("save category"):
-                self.admin.save_newcategory()
+            self.admin.save_newcategory()
         elif str(getParameter).lower().__contains__("cancel new category"):
-                self.admin.cancelnewcategory()
+            self.admin.cancelnewcategory()
         elif str(getParameter).lower().__contains__("edit category"):
-                self.admin.edit_category(self.get_input_data_from_row(rowNumber))
+            self.admin.edit_category(self.get_input_data_from_row(rowNumber))
 
 
         elif str(getParameter).lower().__contains__("new job"):

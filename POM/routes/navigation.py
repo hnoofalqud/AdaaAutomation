@@ -20,23 +20,24 @@ class Navigation(Routes):
     _navigationByOrderXpath = "//a[{0}]//div"
 
     # SIDE MENU NAVIGATION
-    _boardsXpath = _navigationByOrderXpath.format(3)  # BOARDS ORDER IS 1 WITHIN THE DOM SIDE MENU
-    _inboxXpath = _navigationByOrderXpath.format(5)  # INBOX ORDER IS 2 WITHIN THE DOM SIDE MENU
-    _calendarXpath = _navigationByOrderXpath.format(6)  # CALENDAR ORDER IS 3 WITHIN THE DOM SIDE MENU
-    _logsXpath = _navigationByOrderXpath.format(7)  # LOGS ORDER IS 4 WITHIN THE DOM SIDE MENU
-    _approvalXpath = _navigationByOrderXpath.format(8)  # APPROVAL ORDER IS 5 WITHIN THE DOM SIDE MENU
-    _escalationXpath = _navigationByOrderXpath.format(9)
-    _reportsXpath = _navigationByOrderXpath.format(10)
-    _contactsXpath = _navigationByOrderXpath.format(11)
+    _boardsXpath = _navigationByOrderXpath.format(3)  # BOARDS ORDER IS 3 WITHIN THE DOM SIDE MENU
+    _inboxXpath = _navigationByOrderXpath.format(5)  # INBOX ORDER IS 5 WITHIN THE DOM SIDE MENU
+    _calendarXpath = _navigationByOrderXpath.format(6)  # CALENDAR ORDER IS 6 WITHIN THE DOM SIDE MENU
+    _logsXpath = _navigationByOrderXpath.format(7)  # LOGS ORDER IS 7 WITHIN THE DOM SIDE MENU
+    _approvalXpath = _navigationByOrderXpath.format(9)  # APPROVAL ORDER IS 9 WITHIN THE DOM SIDE MENU
+    _escalationXpath = _navigationByOrderXpath.format(10)
+    _reportsXpath = _navigationByOrderXpath.format(11)
+    _contactsXpath = _navigationByOrderXpath.format(12)
     _mytasksXpath=_navigationByOrderXpath.format(8)
-    _adminxpath=_navigationByOrderXpath.format(14)
+    _myhomeXpath=_navigationByOrderXpath.format(1)
+    _adminxpath=_navigationByOrderXpath.format(15)
     # NOTIFICATIONS
-    _notificationsIconXpath = "//span[@class='material-icons notif mat-menu-trigger']"
+    _notificationsIconXpath = "//span[contains(text(),'notifications')]"
     _notificationsListXpath = "//div[@class='mat-menu-content']/div"
 
     # AVATAR ICON
     _avatarIconXpath = "//img[@class='avatar']"
-    _notificationsIconXpath = "//img[@class='{0}'".format('avatar')
+    #_notificationsIconXpath = "//img[@class='{0}'".format('avatar')
 
     def get_navigation_by_label(self, label):
         # CHECK IF FOUND
@@ -58,7 +59,8 @@ class Navigation(Routes):
 
     def get_calendar_btn(self):
         return self.validate.get_web_element(xpath=self._calendarXpath)  # RETURNS A WEB ELEMENT IF FOUND
-
+    def get_home_btn(self):
+        return self.validate.get_web_element(xpath=self._myhomeXpath)
     def get_logs_btn(self):
         return self.validate.get_web_element(xpath=self._logsXpath)  # RETURNS A WEB ELEMENT IF FOUND
 
@@ -113,4 +115,6 @@ class Navigation(Routes):
             navigateTo=self.get_mytasks_btn()
         if str(page).lower().__contains__("my profile"):
             navigateTo=self.get_myprofileBtn()
+        if str(page).lower().__contains__("home"):
+            navigateTo=self.get_home_btn()
         navigateTo.click()

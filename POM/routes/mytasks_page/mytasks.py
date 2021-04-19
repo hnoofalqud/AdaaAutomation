@@ -1,5 +1,3 @@
-from selenium.webdriver import ActionChains
-
 from POM.routes.routes import Routes
 
 
@@ -59,7 +57,6 @@ class Mytasks(Routes):
 
 
 
-
     #FILTERATION
     _FilterBoardDDLXpath="//div[contains(text(),'Select Board')]"
     _FilterBoardOptionXpath="//span[contains(text(),'{0}')]" #BY LABEL
@@ -71,7 +68,20 @@ class Mytasks(Routes):
     # def open_members(self,order):
     #     self.validate.get_web_element(self._taskMembers.format(order)).click()
 
+    def editname(self,name):
+        self.validate.get_web_element(self._TaskNameXpath).clear()
+        self.validate.get_web_element(self._TaskNameXpath).send_keys(name)
+    def editDescription(self,desc):
+        self.validate.get_web_element(self._TaskDescXpath).clear()
+        self.validate.get_web_element(self._TaskDescXpath).send_keys(desc)
+    def edit_startdate(self,start):
+        self.validate.get_web_element(self._TaskStartDateXpath).send_keys(start)
 
+    def edit_enddate(self,end):
+        self.validate.get_web_element(self._TaskEndDateXpath).send_keys(end)
+
+    def edit_duration(self,duration):
+        self.validate.get_web_element(self._TaskDurationXpath).send_keys(duration)
     def select_Recurring(self,type):
         self.validate.get_web_element(self._MakeRecurring).click()
         if str(type).lower()== "daily" :
@@ -82,20 +92,29 @@ class Mytasks(Routes):
             self.validate.get_web_element(self._YearlyRecurringXpath)
 
 
-    def weekly_recurring(self,every,day,occ):
+    # def everoption(self,option ,every):
+    #     if str(option).lower()== "weekly":
+    #         self.weekly_everyrecurring(every)
+    #     elif str(option).lower().__contains__("monthly"):
+    #         self.monthly_recurring()
+
+
+    def weekly_everyrecurring(self,every):
         self.validate.get_web_element(self._RecurringEveryXpath).send_keys(every)
+    def set_weeklyDay(self,day):
         self.validate.get_web_element(self._RecurringWeekDayDDLXpath).click()
         self.validate.get_web_element(self._RecurringWeekDayDDlOption.format(day))
+    def set_weklyoccurrenc(self,occ):
         self.validate.get_web_element(self._RecurringOccurrencesXpath).send_keys(occ)
 
     def monthly_recurring(self,order,every):
-        self.validate.get_web_element(self._selectMonthlyRrecurringday.format(order))
+        self.validate.get_web_element(self._selectMonthlyRrecurringday.format(order)).click()
         self.validate.get_web_element(self._RecurringMonthlyEveryXpath.format(order)).send_keys(every)
 
-
+    # def monthly
     def monthly_recurringdayORDER(self, day):
         self.validate.get_web_element(self._Recurringmonthday).send_keys(day)
-        self.validate.get_web_element(self._RecurringMonthlyEveryXpath.format(1)).send_keys(day)
+        # self.validate.get_web_element(self._RecurringMonthlyEveryXpath.format(1)).send_keys(day)
 
 
     def monthlyrecurringweekday(self):

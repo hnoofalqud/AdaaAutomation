@@ -17,7 +17,7 @@ class ToastMsg(Routes):
 
 
         if str(msg).__contains__('required'):
-            expectedMsg = 'Please enter the required feilds'
+            expectedMsg = 'Please enter the required fields'
 
         elif str(msg).__contains__('code_defined'):
             expectedMsg = 'Board Code Already Defined'
@@ -31,8 +31,10 @@ class ToastMsg(Routes):
             expectedMsg = 'Start Date must be after dependent Task End Date::updateTask::13'
         elif str(msg).__contains__('File Created'):
             expectedMsg = 'File Created'
-        #elif str(msg).lower().__contains__('arabic only'):
-            #expectedMsg = 'Arabic Name Already Defined'
+        elif str(msg).lower().__contains__('Product Status Can not be Set to Ended While the Progress Is Not 100%'):
+            expectedMsg = 'Product Status Can not be Set to Ended While the Progress Is Not 100%'
+        elif str(msg).lower().__contains__('Invalid value'):
+            expectedMsg="Invalid value(s)"
         else:
             print("CHECK THE CODE FOR THE TOAST MSG -> {0}".format(msg))
             return
@@ -43,6 +45,7 @@ class ToastMsg(Routes):
             msg = "TOAST MSG IS VISIBLE : {0}".format(toastMsg.text)
             toastMsg.click()
             toastMsg = True
+
         else:
             msg = "TOAST MSG IS NOT VISIBLE {0}".format(expectedMsg)
             toastMsg = False

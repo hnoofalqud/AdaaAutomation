@@ -18,6 +18,7 @@ from input_output.Excel import ReadExcel
 from POM.routes.mytasks_page.mytasks import Mytasks
 from validate.toastMsg import ToastMsg
 from validate.validateElement import ValidateElement
+from POM.routes.home_page.home import Home
 from Files.utilities import Utilities
 from datetime import datetime, date
 
@@ -44,7 +45,7 @@ browserObj.launch(url=url, browser=browserChoice)  # LAUNCH BROWSER + LOAD URL
 loginPage = Login(driver=browserObj.driver)
 validate = ValidateElement(driver=browserObj.driver)
 
-login = loginPage.login(email="huda.alazzeh@realsoft-me.com", password="Huda@123")
+login = loginPage.login(email="Hanoof.alqadeh@realsoft-me.com", password="Hanoof@123")
 # login = loginPage.login(email="Mohammed.aljezawi@mobisoft-me.com", password="Mohammed@123")
 
 
@@ -62,13 +63,14 @@ if login:
     adminPage = admin(driver=browserObj.driver)
     mytasks= Mytasks(driver=browserObj.driver)
     myprofile=myprofile(driver=browserObj.driver)
+    homepage=Home(driver=browserObj.driver)
 
 
 
 
     for singleTestCase in testCaseList:
         print(singleTestCase)
-        excelToCode = ExcelToCode(browserObj, readExcel, str(singleTestCase), navigationControls, boardsPage, inboxPage , toastMsg , reports,calendarPage, escalation ,approvalsPage,activitylogPage,contactsPage,adminPage,mytasks,myprofile,validate)
+        excelToCode = ExcelToCode(browserObj, readExcel, str(singleTestCase), navigationControls, boardsPage, inboxPage , toastMsg , reports,calendarPage, escalation ,approvalsPage,activitylogPage,contactsPage,adminPage,mytasks,myprofile,homepage,validate)
         result = excelToCode.read_rows()
 
         if result == False:
