@@ -1,8 +1,10 @@
 import time
 from Files.utilities import Utilities
+
 from POM.routes.boards_page.boards import Boards
 from POM.routes.inbox_page.inbox import Inbox
 from POM.routes.navigation import Navigation
+from validate import validateElement
 from validate.toastMsg import ToastMsg
 
 
@@ -97,6 +99,8 @@ class ExcelToCode(Utilities):
             self.validate_contact(rowNumber,getParameter)
         if str(self.currentPage).lower().__contains__("calendar"):
             self.validate_calendar(rowNumber,getParameter)
+        if str(self.currentPage).lower().__contains__("inbox"):
+            self.validate_Inbox(rowNumber,getParameter)
         if str(self.currentPage).lower().__contains__("my tasks"):
             self.validate_mytasks(rowNumber,getParameter)
 
@@ -181,6 +185,8 @@ class ExcelToCode(Utilities):
             self.boardsPage.click_addAttributes()
         elif str(getParameter).lower().__contains__('delete attribute'):
             self.boardsPage.delete_attribute()
+        elif str(getParameter).lower().__contains__('delete task'):
+            self.boardsPage.delete_Task(self.get_input_data_from_row(rowNumber))
         elif str(getParameter).lower().__contains__('save board'):
             self.boardsPage.get_save_new_board_btn()
         elif str(getParameter).lower().__contains__('close') or str(getParameter).lower().__contains__('exit'):
@@ -203,20 +209,34 @@ class ExcelToCode(Utilities):
             self.boardsPage.opentasklist_DayinCalendar(self.get_input_data_from_row(rowNumber))
         elif str(getParameter).lower().__contains__("task details"):
             self.boardsPage.click_Task_Details(self.get_input_data_from_row(rowNumber))
-        elif str(getParameter).lower().__contains__("comment"):
+        elif str(getParameter).lower().__contains__("close task details"):
+            self.boardsPage.get_close_Task_Details()
+        elif str(getParameter).lower().__contains__("comment tab"):
             self.boardsPage.commentINdetails()
+        elif str(getParameter).lower().__contains__("save comment"):
+            self.boardsPage.save_comment()
+        elif str(getParameter).lower().__contains__("send comment"):
+            self.boardsPage.send_comment()
         elif str(getParameter).lower().__contains__("activity logs"):
             self.boardsPage.activityindetails()
         elif str(getParameter).lower().__contains__("add file"):
             self.boardsPage.copycsv()
+        elif str(getParameter).lower().__contains__("gant view"):
+            self.boardsPage.gantview(self.get_input_data_from_row(rowNumber))
         elif str(getParameter).lower().__contains__("edit comment"):
-            self.boardsPage.EditComment(self.get_input_data_from_row(rowNumber))
+            self.boardsPage.EditComment(self.get_input_data_from_row(rowNumber),self.get_extra_data_from_row(rowNumber))
         elif str(getParameter).lower().__contains__('progress ratio'):
             self.boardsPage.click_progress_ratio(self.get_input_data_from_row(rowNumber))
-        elif str(getParameter).lower().__contains__('gant'):
+        elif str(getParameter).lower().__contains__('gant chart'):
             self.boardsPage.click_gantview()
+        elif str(getParameter).lower().__contains__('take screenshot'):
+            self.boardsPage.takeScreenshot(self.get_input_data_from_row(rowNumber))
         elif str(getParameter).lower().__contains__('calendar'):
             self.boardsPage.click_Calendar_view()
+        elif str(getParameter).lower().__contains__('open task in gant'):
+            self.boardsPage.viewtaskingant(self.get_input_data_from_row(rowNumber))
+        elif str(getParameter).lower().__contains__('move'):
+            self.boardsPage.Move_RightLeft(self.get_input_data_from_row(rowNumber))
         elif str(getParameter).lower().__contains__('open task'):
             self.boardsPage.open_Taskincalendar(self.get_input_data_from_row(rowNumber))
         elif str(getParameter).lower().__contains__("copy from"):
@@ -276,15 +296,20 @@ class ExcelToCode(Utilities):
             self.homepage.openBoards(self.get_input_data_from_row(rowNumber))
         elif str(getParmeter).lower().__contains__("tasks"):
             self.homepage.tasks(self.get_input_data_from_row(rowNumber),self.get_extra_data_from_row(rowNumber))
+
     def inbox_buttons(self, rowNumber, getParameter):
         if str(getParameter).lower().__contains__('new'):
-            self.inboxPage.get_new_inbox_msg_btn().click()
+            self.inboxPage.get_new_inbox_msg_btn()
         elif str(getParameter).lower().__contains__('send'):
-            self.inboxPage.get_send_btn().click()
+            self.inboxPage.get_send_btn()
         elif str(getParameter).lower().__contains__('close') or str(getParameter).lower().__contains__('exit'):
             self.inboxPage.get_close_new_inbox_msg_btn()
         elif str(getParameter).lower().__contains__('read'):
             self.inboxPage.read_Message(self.get_input_data_from_row(rowNumber))
+        elif str(getParameter).lower().__contains__("outbox") or str(getParameter).lower().__contains__("inbox"):
+            self.inboxPage.Set_BoxType(getParameter)
+        elif str(getParameter).lower().__contains__('more'):
+            self.inboxPage.click_more_btn(self.get_input_data_from_row(rowNumber),self.get_extra_data_from_row(rowNumber))
         elif str(getParameter).lower().__contains__('filter'):
             self.inboxPage.click_Filter()
         elif str(getParameter).lower().__contains__('type'):
@@ -293,8 +318,16 @@ class ExcelToCode(Utilities):
             self.inboxPage.filter_Boards(self.get_input_data_from_row(rowNumber))
         elif str(getParameter).lower().__contains__('users'):
             self.inboxPage.filter_users(self.get_input_data_from_row(rowNumber))
+        elif str(getParameter).lower().__contains__('confirm'):
+            self.inboxPage.confirm_delete()
         else:
             print("{0} NOT A INBOX BUTTON".format(getParameter))
+
+    def validate_Inbox(self,rowNumber,getParameter):
+        if str(getParameter).lower().__contains__("inbox number"):
+            self.inboxPage.validate_inboxNum(self.get_input_data_from_row(rowNumber))
+        elif str(getParameter).lower().__contains__("user list"):
+            self.inboxPage.validate_filterbyUser(self.get_input_data_from_row(rowNumber))
 
     def set_board(self, getParameter, getInputData, getExtraData):
         if str(getParameter).lower().__contains__("board name"):
@@ -352,19 +385,21 @@ class ExcelToCode(Utilities):
         elif str(getParameter).lower().__contains__("tasks number"):
             self.boardsPage.validate_Tasks_number()
         elif str(getParameter).lower().__contains__("comment"):
-            self.boardsPage.Set_Comment(getInputData)
+            self.boardsPage.Set_Comment(getInputData,getExtraData)
         elif str(getParameter).lower().__contains__("progress type"):
-            self.boardsPage.set_task_progress(getInputData)
+            self.boardsPage.set_task_progress(getInputData,getExtraData)
         elif str(getParameter).lower().__contains__("task ratio"):
             self.boardsPage.set_task_progress_ratio(getInputData)
-        elif str(getParameter).lower().__contains__("dependency"):
-            self.boardsPage.set_depndancy(getInputData)
+        elif str(getParameter).lower().__contains__("task dependency"):
+            self.boardsPage.set_depndancy(getInputData,getExtraData)
         elif str(getParameter).lower().__contains__("progress ratio"):
             self.boardsPage.set_progress(getInputData)
         elif str(getParameter).lower().__contains__("attributes value"):
             self.boardsPage.set_attributeValue(getInputData)
-        elif str(getParameter).lower().__contains__("filter date"):
-            self.boardsPage.set_date(startDate=str(getInputData), endDate=str(getExtraData))
+        elif str(getParameter).lower().__contains__("filter start date"):
+            self.boardsPage.set_startdate(getInputData)
+        elif str(getParameter).lower().__contains__("filter end date"):
+            self.boardsPage.set_Enddate(getInputData)
 
     def validate_Boards(self,rowNumber,getParameter):
         if str(getParameter).lower().__contains__("approve status"):
@@ -373,6 +408,11 @@ class ExcelToCode(Utilities):
             self.boardsPage.validate_boardName_Edit(self.get_input_data_from_row(rowNumber))
         elif str(getParameter).lower().__contains__("tasks list"):
             self.boardsPage.validate_tasksListInCalendar()
+        elif str(getParameter).lower().__contains__('take screenshot'):
+            self.boardsPage.takeScreenshot(self.get_input_data_from_row(rowNumber))
+        elif str(getParameter).lower().__contains__('comment'):
+            self.boardsPage.validate_comments(self.get_input_data_from_row(rowNumber))
+
     def set_inbox(self, getParameter, getInputData, getExtraData):
         if str(getParameter).lower().__contains__("board"):
             self.inboxPage.set_inbox_board_name_drop_down(getInputData)
@@ -381,7 +421,7 @@ class ExcelToCode(Utilities):
         elif str(getParameter).lower().__contains__("description"):
             self.inboxPage.set_msg_description(getInputData)
         elif str(getParameter).lower().__contains__("filter date"):
-            self.inboxPage.set_date(startDate=str(getInputData), endDate=str(getExtraData))
+            self.inboxPage.set_date(getInputData, getExtraData)
 
     def myprofile_buttons(self,rowNumber,getParameter):
         if str(getParameter).lower().__contains__("permission"):

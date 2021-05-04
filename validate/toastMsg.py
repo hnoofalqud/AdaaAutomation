@@ -31,10 +31,14 @@ class ToastMsg(Routes):
             expectedMsg = 'Start Date must be after dependent Task End Date::updateTask::13'
         elif str(msg).__contains__('File Created'):
             expectedMsg = 'File Created'
+        elif str(msg).__contains__('Please check '):
+            expectedMsg = 'Please check the validity of the data entered'
         elif str(msg).lower().__contains__('Product Status Can not be Set to Ended While the Progress Is Not 100%'):
             expectedMsg = 'Product Status Can not be Set to Ended While the Progress Is Not 100%'
         elif str(msg).lower().__contains__('Invalid value'):
             expectedMsg="Invalid value(s)"
+        elif str(msg).lower().__contains__('Start Date must be after dependent Task Start Date'):
+            expectedMsg="Start Date must be after dependent Task Start Date"
         else:
             print("CHECK THE CODE FOR THE TOAST MSG -> {0}".format(msg))
             return

@@ -302,7 +302,7 @@ function toggleInbox() {
   }
 }
 function toggleCalendar() {
-  var list = document.getElementsByClassName("inbox")
+  var list = document.getElementsByClassName("Calendar")
 
   for (let x of list){
   if (x.style.visibility === 'hidden') {
